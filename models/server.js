@@ -1,6 +1,7 @@
 // imports
 const cors = require('cors')
 const express = require('express');
+const { dbConn } = require('../db/config');
 
 /**
  * @class Clase para manejar el servidor
@@ -12,11 +13,19 @@ class Server {
         this.port = process.env.PORT;
         this.usersPath = '/api/users';
 
+        // Database Connection
+        this.initDB();
+
         // Middlewares
         this.middlewares();
 
         // Routes
         this.routes();
+    }
+
+    // MongoDB Connection
+    async initDB() {
+        await dbConn();
     }
 
     middlewares() {

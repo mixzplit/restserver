@@ -1,4 +1,8 @@
 const { response, request } = require('express');
+const bcrypt = require('bcryptjs');
+//Model
+const User = require('../models/users');
+
 
 // GET
 // Usamos query para obtener parametros en la URL
@@ -27,13 +31,33 @@ const usersPut = (req, res = response) => {
 }
 
 // POST
-const usersPost = (req, res = response) => {
+const usersPost = async(req, res = response) => {
+
     // body request
-    const body = req.body;
+    const { name, email, password, phone_number, role } = req.body;
+    const user = new User({ name, email, password, phone_number, role });
+
+    // Verificar si el correo ya existe
+    const emailExists = await User.findOne({ email });
+    if (emailExists) {
+        return res.status(400).json({
+            msg: 'Email ya existe!!'
+        });
+    }
+
+    //Encriptar password
+    const salt = bcrypt.genSaltSync(10); //Complejidad de Encriptacion
+    // Aqui asignamos la pass encriptada a la propiedad de nuestro objeto
+    user.password = bcrypt.hashSync(password, salt);
+
+    // SaveDB
+    await user.save();
+
     res.json({
         msg: 'post API - Controller',
-        body
+        user
     });
+
 }
 
 // DELETE
