@@ -25,7 +25,7 @@ const userSchema = Schema({
     role: {
         type: String,
         required: true,
-        enum: ['ADMIN_ROLE', 'USER_ROLE']
+        enum: ['ADMIN_ROLE', 'USER_ROLE', 'VENTAS_ROLE']
     },
     status: {
         type: Boolean,
@@ -40,5 +40,19 @@ const userSchema = Schema({
         default: false
     },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at', deletedAd: 'deleted_at' } });
+
+
+// @override method
+// Debe ser una funcion normal y no una funcion de flecha
+// por que vamos a usar el objeto this y una funcion de
+// fecha apunta el this fuera de la funcion y por eso
+// usamos la funcion normal para obtener la instancia creada
+userSchema.methods.toJSON = function() {
+    // desestructuramos y sacamos las propiedades
+    // __v y password y el resto lo mandamos en user y
+    // lo retornamos
+    const { __v, password, ...user } = this.toObject();
+    return user;
+}
 
 module.exports = model('User', userSchema);

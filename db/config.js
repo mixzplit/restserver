@@ -9,8 +9,7 @@ const dbConn = async() => {
         mongoose.connect(process.env.MONGODB_CNN_ATLAS, {
             useNewUrlParser: true,
             useUnifiedTopology: true
-                /*useCreateIndex: true,
-                useFindAndModify: false*/
+
         });
 
         console.log('Conexion Establecida');

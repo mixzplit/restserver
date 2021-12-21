@@ -2,32 +2,62 @@ const { response, request } = require('express');
 const bcrypt = require('bcryptjs');
 //Model
 const User = require('../models/users');
+const { status } = require('express/lib/response');
 
 
 // GET
 // Usamos query para obtener parametros en la URL
-const usersGet = (req = request, res = response) => {
+const usersGet = async(req = request, res = response) => {
+    // const { q, nombre, apiKey, page = 1, limit } = req.query;
 
-    const { q, nombre, apiKey, page = 1, limit } = req.query;
+    //desestructuramos el request
+    const { limite = 5, from = 0 } = req.query; // argumentos opcionales
+    const query = { status: true };
+    try {
+        const usuarios = User.find(query)
+            .skip(Number(from))
+            .limit(Number(limite));
 
-    res.json({
-        msg: 'get API - Controller',
-        q,
-        nombre,
-        apiKey,
-        page,
-        limit
-    });
+        const totalUsuarios = User.countDocuments(query);
+
+        // Aqui usamos la funcion para llamar a todas
+        // la promesas simultaneamente y ademas hacemos
+        // una desestructuracion de objetos para armar la respuesta
+        // tal como esta, donde la respuesta se armara en el orden
+        // de la desestructuracion
+        const [total, users] = await Promise.all([
+            totalUsuarios,
+            usuarios
+        ])
+
+        res.json({
+            total,
+            users
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            msg: "Bad Request",
+            error: error,
+
+        });
+    }
+
 }
 
 // PUT
-const usersPut = (req, res = response) => {
+const usersPut = async(req, res = response) => {
     const { id } = req.params;
-    console.log(id);
-    res.json({
-        msg: 'put API - Controller',
-        id
-    });
+    const { _id, password, email, google_auth, ...user } = req.body;
+
+    if (password) {
+        const salt = bcrypt.genSaltSync(10); //Complejidad de Encriptacion
+        // Aqui asignamos la pass encriptada a la propiedad de nuestro objeto
+        user.password = bcrypt.hashSync(password, salt);
+    }
+
+    const userUpdate = await User.findByIdAndUpdate(id, user);
+    res.json(userUpdate);
 }
 
 // POST
@@ -38,12 +68,7 @@ const usersPost = async(req, res = response) => {
     const user = new User({ name, email, password, phone_number, role });
 
     // Verificar si el correo ya existe
-    const emailExists = await User.findOne({ email });
-    if (emailExists) {
-        return res.status(400).json({
-            msg: 'Email ya existe!!'
-        });
-    }
+
 
     //Encriptar password
     const salt = bcrypt.genSaltSync(10); //Complejidad de Encriptacion
@@ -61,12 +86,14 @@ const usersPost = async(req, res = response) => {
 }
 
 // DELETE
-const usersDelete = (req, res = response) => {
+const usersDelete = async(req, res = response) => {
     const { id } = req.params;
-    res.json({
-        msg: 'delete API - Controller',
-        id
-    });
+    // Borrar usuario definitivamente
+    //const user = User.findByIdAndDelete(id);
+
+    const user = await User.findByIdAndUpdate(id, { status: false });
+
+    res.json(user);
 }
 
 const usersPatch = (req, res = response) => {
