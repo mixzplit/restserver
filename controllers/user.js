@@ -39,7 +39,6 @@ const usersGet = async(req = request, res = response) => {
         res.status(400).json({
             msg: "Bad Request",
             error: error,
-
         });
     }
 
@@ -57,7 +56,7 @@ const usersPut = async(req, res = response) => {
     }
 
     const userUpdate = await User.findByIdAndUpdate(id, user);
-    res.json(userUpdate);
+    res.status(201).json(userUpdate);
 }
 
 // POST
@@ -78,7 +77,7 @@ const usersPost = async(req, res = response) => {
     // SaveDB
     await user.save();
 
-    res.json({
+    res.status(201).json({
         msg: 'post API - Controller',
         user
     });

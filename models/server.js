@@ -2,16 +2,17 @@
 const cors = require('cors')
 const express = require('express');
 const { dbConn } = require('../db/config');
-
-/**
- * @class Clase para manejar el servidor
- * @author David Acurero
- */
+const { swagger } = require('../helpers/swagger')
+    /**
+     * @class Clase para manejar el servidor
+     * @author David Acurero
+     */
 class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
         this.usersPath = '/api/users';
+        this.swaggerPath = '/api-docs';
 
         // Database Connection
         this.initDB();
@@ -21,11 +22,18 @@ class Server {
 
         // Routes
         this.routes();
+
+        this.swagger(this.app);
     }
 
     // MongoDB Connection
     async initDB() {
         await dbConn();
+    }
+
+    // Swagger
+    async swagger(app) {
+        await swagger(app);
     }
 
     middlewares() {
@@ -46,6 +54,8 @@ class Server {
     routes() {
         // user Routes
         this.app.use(this.usersPath, require('../routes/user'));
+        //swagger
+        //this.app.use(this.swaggerPath, require('../helpers/swagger'));
 
     }
 
