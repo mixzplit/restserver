@@ -15,7 +15,7 @@ const swagger = async(express) => {
                 url: "http://localhost:8081"
             }]
         },
-        apis: ['./routes/user.js'],
+        apis: ['./routes/*.js'],
     }
 
     express.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerJsDoc(swaggerSpec)));

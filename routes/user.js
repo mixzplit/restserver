@@ -3,9 +3,6 @@ const { check } = require('express-validator');
 const { usersGet, usersPut, usersPost, usersDelete, usersPatch } = require('../controllers/user');
 // Middlewares
 const { isValidRole, emailExists, userIdExists } = require('../helpers/db-validators');
-//const { validateFields } = require('../middlewares/validate-fields');
-//const { validateJWT } = require('../middlewares/validate-jwt');
-//const { esAdminRole, tieneRole } = require('../middlewares/validate-roles');
 
 const { validateFields, validateJWT, esAdminRole, tieneRole } = require('../middlewares');
 
