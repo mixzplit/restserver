@@ -51,7 +51,8 @@ userSchema.methods.toJSON = function() {
     // desestructuramos y sacamos las propiedades
     // __v y password y el resto lo mandamos en user y
     // lo retornamos
-    const { __v, password, ...user } = this.toObject();
+    const { __v, password, _id, ...user } = this.toObject();
+    user.uid = _id;
     return user;
 }
 

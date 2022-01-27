@@ -1,8 +1,8 @@
 const { response, request } = require('express');
+const { status } = require('express/lib/response');
 const bcrypt = require('bcryptjs');
 //Model
 const User = require('../models/users');
-const { status } = require('express/lib/response');
 
 
 // GET
@@ -91,7 +91,7 @@ const usersDelete = async(req, res = response) => {
     //const user = User.findByIdAndDelete(id);
 
     const user = await User.findByIdAndUpdate(id, { status: false });
-
+    //const userAuth = req.usuario;
     res.json(user);
 }
 
