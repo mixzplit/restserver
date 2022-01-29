@@ -24,6 +24,10 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <script>
+        var url = (window.location.hostname.includes('localhost')) ?
+            'http://localhost:8081/api/auth/google' :
+            'https://restserver-magictipi.herokuapp.com/api/auth/google';
+
         function handleCredentialResponse(response) {
             // decodeJwtResponse() is a custom function defined by you
             // to decode the credential response.
@@ -34,7 +38,7 @@
                 id_token: response.credential
             };
 
-            fetch('http://localhost:8081/api/auth/google', {
+            fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
