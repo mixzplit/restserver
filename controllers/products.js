@@ -59,7 +59,7 @@ const productPost = async(req, res = response) => {
 
         if (productDB) {
             return res.status(400).json({
-                msg: `La categoria ${productDB.name} ya existe!`
+                msg: `El producto ${productDB.name} ya existe!`
             });
         }
 
