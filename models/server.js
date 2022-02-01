@@ -11,9 +11,15 @@ class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
-        this.usersPath = '/api/users';
-        this.authPath = '/api/auth';
-        this.swaggerPath = '/api-docs';
+        // Objeto Rutas
+        this.paths = {
+            auth: '/api/auth',
+            categories: '/api/categories',
+            products: '/api/products',
+            users: '/api/users',
+            //swagger:    '/api-docs',
+        }
+
 
         // Database Connection
         this.initDB();
@@ -54,9 +60,13 @@ class Server {
 
     routes() {
 
-        this.app.use(this.authPath, require('../routes/auth'));
+        this.app.use(this.paths.auth, require('../routes/auth'));
         // user Routes
-        this.app.use(this.usersPath, require('../routes/user'));
+        this.app.use(this.paths.users, require('../routes/user'));
+        // products Routes
+        this.app.use(this.paths.products, require('../routes/products'));
+        // caterories routes
+        this.app.use(this.paths.categories, require('../routes/categories'));
         //swagger
         //this.app.use(this.swaggerPath, require('../helpers/swagger'));
 
