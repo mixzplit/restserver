@@ -1,6 +1,8 @@
 // imports
 const cors = require('cors')
 const express = require('express');
+const fileUpload = require('express-fileupload');
+
 const { dbConn } = require('../db/config');
 const { swagger } = require('../helpers/swagger')
     /**
@@ -18,6 +20,7 @@ class Server {
             find: '/api/find', // busquedas
             products: '/api/products',
             users: '/api/users',
+            uploads: '/api/uploads',
             //swagger:    '/api-docs',
         }
 
@@ -57,6 +60,14 @@ class Server {
         // ya que directamente carga el index que
         // creamos
         this.app.use(express.static('public'));
+
+        // File Upload - Carga de Archivos
+        this.app.use(fileUpload({
+            useTempFiles: true,
+            tempFileDir: '/tmp/',
+            // Esta propiedad permite crear directorios
+            createParentPath: true
+        }));
     }
 
     routes() {
@@ -70,6 +81,8 @@ class Server {
         this.app.use(this.paths.products, require('../routes/products'));
         // caterories routes
         this.app.use(this.paths.categories, require('../routes/categories'));
+        // uploads
+        this.app.use(this.paths.uploads, require('../routes/uploads'));
         //swagger
         //this.app.use(this.swaggerPath, require('../helpers/swagger'));
 
